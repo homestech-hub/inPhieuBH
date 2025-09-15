@@ -92,10 +92,6 @@
       font-size: 12px;
     }
 
-    .table-product td {
-      font-size: 12px;
-    }
-
     .tfoot-total td {
       font-weight: bold;
     }
@@ -138,30 +134,21 @@
       text-decoration: underline;
     }
 
+    /* Responsive: auto zoom trên mobile */
     @media (max-width: 600px) {
       body {
         font-size: 12px;
-        padding: 5px;
+        padding: 0;
+      }
+
+      .container {
+        transform: scale(0.85);   /* Thu nhỏ toàn bộ */
+        transform-origin: top left;
+        width: 118%;              /* Bù trừ để vừa màn hình */
       }
 
       .title h1 { font-size: 13px; }
       .title h2 { font-size: 12px; }
-
-      .info-table td {
-        display: block;
-        width: 100%;
-        padding: 2px 0;
-      }
-
-      .label { display: inline-block; width: auto; }
-      .value { display: inline-block; width: auto; min-width: 50px; }
-
-      .table-product {
-        font-size: 11px;
-        display: block;
-        overflow-x: auto;
-        white-space: nowrap;
-      }
 
       .sign-section { flex-direction: column; align-items: center; }
       .sign-col { width: 100%; margin-bottom: 30px; }
@@ -176,6 +163,8 @@
       .container {
         box-shadow: none;
         border: none;
+        transform: none !important; /* In ra giữ nguyên A5 */
+        width: 100% !important;
       }
     }
   </style>
@@ -206,7 +195,6 @@
       <thead>
         <tr>
           <th>STT</th>
-          <th>Mã SP</th>
           <th>Tên SP</th>
           <th>SL</th>
           <th>Đơn giá</th>
@@ -218,11 +206,11 @@
       <tbody id="productTable"></tbody>
       <tfoot>
         <tr class="tfoot-total">
-          <td colspan="7" style="text-align: right;">Tổng cộng:</td>
+          <td colspan="6" style="text-align: right;">Tổng cộng:</td>
           <td id="totalAmount"></td>
         </tr>
         <tr class="tfoot-words">
-          <td colspan="8">
+          <td colspan="7">
             <strong>Số tiền bằng chữ:</strong> <span id="amountInWords"></span>
           </td>
         </tr>
@@ -344,22 +332,20 @@
 
       items.forEach((row, index) => {
         const cols = row.split("~");
-        let maSP = cols[0] ? cols[0].trim() : "";
-        let tenSP = cols[1] ? cols[1].trim() : "";
-        const rawThanhTien = cols[6] ? String(cols[6]).replace(/\./g, "").replace(/,/g, "") : "";
+        let tenSP = cols[0] ? cols[0].trim() : "";
+        const rawThanhTien = cols[5] ? String(cols[5]).replace(/\./g, "").replace(/,/g, "") : "";
         const thanhTien = rawThanhTien ? Number(rawThanhTien) : 0;
         totalAmount += thanhTien;
 
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td>${index + 1}</td>
-          <td>${maSP}</td>
           <td style="text-align:left">${tenSP}</td>
-          <td>${cols[2] || ""}</td>
+          <td>${cols[1] || ""}</td>
+          <td>${cols[2] ? formatNumber(cols[2]) : ""}</td>
           <td>${cols[3] ? formatNumber(cols[3]) : ""}</td>
           <td>${cols[4] ? formatNumber(cols[4]) : ""}</td>
           <td>${cols[5] ? formatNumber(cols[5]) : ""}</td>
-          <td>${cols[6] ? formatNumber(cols[6]) : ""}</td>
         `;
         tableBody.appendChild(tr);
       });
