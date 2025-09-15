@@ -2,8 +2,6 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <meta http-equiv="Content-Language" content="vi" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Phiếu Bán Hàng</title>
   <style>
@@ -13,25 +11,27 @@
     }
 
     body {
-      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      font-family: "Segoe UI", Arial, sans-serif;
       background: #f4f6f8;
       margin: 0;
       padding: 20px;
       font-size: 13px;
+      line-height: 1.4;
     }
 
     .container {
-      max-width: 950px;
+      width: 100%;
+      max-width: 1000px;
       margin: auto;
       background: white;
-      padding: 24px 32px;
+      padding: 20px 25px;
       border-radius: 10px;
       box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
     }
 
     .title {
       text-align: center;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
     }
 
     .title h1 {
@@ -62,20 +62,22 @@
       font-weight: 600;
       color: #333;
       white-space: nowrap;
-      width: 20%;
+      width: 22%;
     }
 
     .value {
       border-bottom: 1px solid #ccc;
-      min-width: 150px;
-      display: inline-block;
+      min-width: 100px;
+      display: block;
       padding-bottom: 2px;
+      word-break: break-word;
     }
 
     .table-product {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 5px;
+      margin-bottom: 10px;
+      table-layout: auto;
     }
 
     .table-product th, .table-product td {
@@ -87,10 +89,12 @@
     .table-product th {
       background: #cce0ff;
       font-size: 13px;
+      white-space: nowrap;
     }
 
     .table-product td {
       font-size: 13px;
+      word-break: break-word;
     }
 
     .tfoot-total td {
@@ -105,12 +109,15 @@
 
     .sign-section {
       display: flex;
-      justify-content: space-around;
+      justify-content: space-between;
       margin-top: 35px;
+      flex-wrap: wrap;
+      gap: 20px;
     }
 
     .sign-col {
-      width: 40%;
+      flex: 1;
+      min-width: 200px;
       text-align: center;
     }
 
@@ -150,6 +157,7 @@
       .container {
         box-shadow: none;
         border: none;
+        padding: 0;
       }
     }
   </style>
@@ -217,157 +225,5 @@
       </div>
     </div>
   </div>
-
-  <script>
-    // Giải pháp decode an toàn: xử lý + (space), decode 1 hoặc 2 lần nếu cần
-    function decodeSafe(s) {
-      if (s == null) return "";
-      try {
-        // Thay + thành space (nếu URL được form-encoded)
-        s = s.replace(/\+/g, ' ');
-        // decode lần 1
-        s = decodeURIComponent(s);
-        // Nếu sau decode vẫn còn mã %XX thì decode thêm lần nữa (double-encoded)
-        if (/%[0-9A-F]{2}/i.test(s)) {
-          try {
-            s = decodeURIComponent(s);
-          } catch (e) {
-            // nếu lỗi thì giữ nguyên
-          }
-        }
-      } catch (e) {
-        // fallback: unescape (ít an toàn nhưng có thể giúp)
-        try {
-          s = unescape(s);
-        } catch (e2) {
-          // giữ nguyên s nếu không decode được
-        }
-      }
-      return s;
-    }
-
-    function getQueryParams() {
-      const params = {};
-      const query = (location.search || "").replace(/^\?/, "");
-      if (!query) return params;
-
-      query.split("&").forEach(function(part) {
-        if (!part) return;
-        const idx = part.indexOf("=");
-        let rawKey, rawValue;
-        if (idx >= 0) {
-          rawKey = part.slice(0, idx);
-          rawValue = part.slice(idx + 1);
-        } else {
-          rawKey = part;
-          rawValue = "";
-        }
-        const key = decodeSafe(rawKey);
-        const value = decodeSafe(rawValue);
-        params[key] = value;
-      });
-
-      return params;
-    }
-
-    function formatNumber(num) {
-      if (num === "" || num == null || isNaN(Number(num))) return "";
-      return Number(num).toLocaleString('vi-VN');
-    }
-
-    // Chuyển số thành chữ tiếng Việt
-    function numberToVietnameseWords(num) {
-      if (!num && num !== 0) return "";
-      num = Number(num) || 0;
-      if (num === 0) return "Không đồng";
-
-      const ones = ["", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"];
-      const teens = ["mười", "mười một", "mười hai", "mười ba", "mười bốn", "mười lăm", "mười sáu", "mười bảy", "mười tám", "mười chín"];
-      const tens = ["", "", "hai mươi", "ba mươi", "bốn mươi", "năm mươi", "sáu mươi", "bảy mươi", "tám mươi", "chín mươi"];
-      const units = ["", "nghìn", "triệu", "tỷ", "nghìn tỷ", "triệu tỷ"];
-
-      function readThreeDigits(number) {
-        let hundred = Math.floor(number / 100);
-        let ten = Math.floor((number % 100) / 10);
-        let unit = number % 10;
-        let result = "";
-
-        if (hundred > 0) {
-          result += ones[hundred] + " trăm";
-          if (ten === 0 && unit > 0) result += " lẻ";
-        }
-
-        if (ten > 1) {
-          result += (result ? " " : "") + tens[ten];
-          if (unit === 1) result += " mốt";
-          else if (unit === 5) result += " lăm";
-          else if (unit > 0) result += " " + ones[unit];
-        } else if (ten === 1) {
-          result += (result ? " " : "") + teens[unit];
-        } else if (unit > 0) {
-          result += (result ? " " : "") + ones[unit];
-        }
-
-        return result.trim();
-      }
-
-      let str = "";
-      let i = 0;
-      while (num > 0) {
-        const chunk = num % 1000;
-        if (chunk !== 0) {
-          const chunkWords = readThreeDigits(chunk);
-          str = chunkWords + (units[i] ? " " + units[i] : "") + (str ? " " + str : "");
-        }
-        num = Math.floor(num / 1000);
-        i++;
-      }
-
-      return str.trim().replace(/\s+/g, " ") + " đồng";
-    }
-
-    const params = getQueryParams();
-
-    // Gán dữ liệu vào các field
-    document.getElementById("soPhieu").textContent = params.soPhieu || "";
-    document.getElementById("ngayTao").textContent = params.ngayTao || "";
-    document.getElementById("nhaCungCap").textContent = params.nhaCungCap || "";
-    document.getElementById("lyDoMH").textContent = params.lyDoMH || "";
-    document.getElementById("trangthaiduyet").textContent = params.trangthaiduyet || "";
-    document.getElementById("nguoiDeNghi").textContent = params.nguoiDeNghi || "";
-
-    if (params.items) {
-      const items = params.items.split("|").filter(item => item.trim() !== "");
-      const tableBody = document.getElementById("productTable");
-
-      let totalAmount = 0;
-
-      items.forEach((row, index) => {
-        const cols = row.split("~");
-        // xử lý tên SP: loại bỏ dấu phẩy đầu/cuối nếu có
-        let tenSP = cols[0] ? cols[0].replace(/^,|,$/g, "").trim() : "";
-        // chuyển string tiền có thể chứa '.' hoặc ',' thành số
-        const rawThanhTien = cols[5] ? String(cols[5]).replace(/\./g, "").replace(/,/g, "") : "";
-        const thanhTien = rawThanhTien ? Number(rawThanhTien) : 0;
-        totalAmount += thanhTien;
-
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${index + 1}</td>
-          <td style="text-align:left">${tenSP}</td>
-          <td>${cols[1] || ""}</td>
-          <td>${cols[2] ? formatNumber(cols[2]) : ""}</td>
-          <td>${cols[3] ? formatNumber(cols[3]) : ""}</td>
-          <td>${cols[4] ? formatNumber(cols[4]) : ""}</td>
-          <td>${cols[5] ? formatNumber(cols[5]) : ""}</td>
-        `;
-        tableBody.appendChild(tr);
-      });
-
-      document.getElementById("totalAmount").textContent = formatNumber(totalAmount);
-      const words = numberToVietnameseWords(totalAmount);
-      document.getElementById("amountInWords").textContent = words ? words.replace(/^./, c => c.toUpperCase()) : "";
-    }
-  </script>
 </body>
 </html>
