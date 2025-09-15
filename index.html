@@ -2,8 +2,10 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hoá Đơn Bán Hàng</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta http-equiv="Content-Language" content="vi" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Phiếu Bán Hàng</title>
   <style>
     @page {
       size: A5 landscape;
@@ -12,21 +14,19 @@
 
     body {
       font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-      margin: 0;
-      padding: 10px;
-      font-size: 13px;
       background: #f4f6f8;
+      margin: 0;
+      padding: 20px;
+      font-size: 13px;
     }
 
     .container {
-      max-width: 100%;
+      max-width: 950px;
       margin: auto;
       background: white;
-      padding: 16px;
+      padding: 24px 32px;
       border-radius: 10px;
       box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
-      box-sizing: border-box;
-      overflow-x: auto;
     }
 
     .title {
@@ -50,24 +50,24 @@
     .info-table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 10px;
+      margin-bottom: 20px;
     }
 
     .info-table td {
-      padding: 4px 6px;
+      padding: 6px 10px;
       vertical-align: top;
-      font-size: 12px;
     }
 
     .label {
       font-weight: 600;
+      color: #333;
       white-space: nowrap;
       width: 20%;
     }
 
     .value {
       border-bottom: 1px solid #ccc;
-      min-width: 120px;
+      min-width: 150px;
       display: inline-block;
       padding-bottom: 2px;
     }
@@ -75,18 +75,22 @@
     .table-product {
       width: 100%;
       border-collapse: collapse;
-      font-size: 12px;
+      margin-bottom: 5px;
     }
 
     .table-product th, .table-product td {
       border: 1px solid #ccc;
-      padding: 4px;
+      padding: 6px;
       text-align: center;
-      word-break: break-word;
     }
 
     .table-product th {
       background: #cce0ff;
+      font-size: 13px;
+    }
+
+    .table-product td {
+      font-size: 13px;
     }
 
     .tfoot-total td {
@@ -95,21 +99,23 @@
 
     .tfoot-words td {
       font-style: italic;
-      padding-top: 6px;
+      padding-top: 10px;
       text-align: left;
-      font-size: 12px;
     }
 
     .sign-section {
       display: flex;
       justify-content: space-around;
-      margin-top: 20px;
-      font-size: 12px;
+      margin-top: 35px;
     }
 
     .sign-col {
       width: 40%;
       text-align: center;
+    }
+
+    .sign-col p {
+      margin: 5px 0;
     }
 
     .sign-title {
@@ -119,32 +125,29 @@
 
     .sign-placeholder {
       font-style: italic;
-      font-size: 11px;
+      font-size: 12px;
       color: #666;
-      margin-bottom: 30px;
+      margin-bottom: 40px;
     }
 
     .sign-space {
-      min-height: 50px;
+      min-height: 60px;
     }
 
     .sign-name {
-      margin-top: 40px;
+      margin-top: 60px;
       font-weight: bold;
       text-decoration: underline;
     }
 
-    /* In ấn */
     @media print {
       body {
         background: white;
         margin: 0;
         padding: 0;
-        font-size: 13px;
       }
+
       .container {
-        max-width: 100%;
-        padding: 24px 32px;
         box-shadow: none;
         border: none;
       }
@@ -216,28 +219,68 @@
   </div>
 
   <script>
+    // Giải pháp decode an toàn: xử lý + (space), decode 1 hoặc 2 lần nếu cần
+    function decodeSafe(s) {
+      if (s == null) return "";
+      try {
+        // Thay + thành space (nếu URL được form-encoded)
+        s = s.replace(/\+/g, ' ');
+        // decode lần 1
+        s = decodeURIComponent(s);
+        // Nếu sau decode vẫn còn mã %XX thì decode thêm lần nữa (double-encoded)
+        if (/%[0-9A-F]{2}/i.test(s)) {
+          try {
+            s = decodeURIComponent(s);
+          } catch (e) {
+            // nếu lỗi thì giữ nguyên
+          }
+        }
+      } catch (e) {
+        // fallback: unescape (ít an toàn nhưng có thể giúp)
+        try {
+          s = unescape(s);
+        } catch (e2) {
+          // giữ nguyên s nếu không decode được
+        }
+      }
+      return s;
+    }
+
     function getQueryParams() {
       const params = {};
-      location.search.substr(1).split("&").forEach(function(part) {
-        const [key, value] = part.split("=");
-        let decodedValue = decodeURIComponent(value || "");
-        // Nếu vẫn còn mã %xx thì decode thêm lần nữa
-        if (/%[0-9A-F]{2}/i.test(decodedValue)) {
-          try { decodedValue = decodeURIComponent(decodedValue); } catch (e) {}
+      const query = (location.search || "").replace(/^\?/, "");
+      if (!query) return params;
+
+      query.split("&").forEach(function(part) {
+        if (!part) return;
+        const idx = part.indexOf("=");
+        let rawKey, rawValue;
+        if (idx >= 0) {
+          rawKey = part.slice(0, idx);
+          rawValue = part.slice(idx + 1);
+        } else {
+          rawKey = part;
+          rawValue = "";
         }
-        params[decodeURIComponent(key)] = decodedValue;
+        const key = decodeSafe(rawKey);
+        const value = decodeSafe(rawValue);
+        params[key] = value;
       });
+
       return params;
     }
 
     function formatNumber(num) {
-      if (num === "" || num == null) return "";
+      if (num === "" || num == null || isNaN(Number(num))) return "";
       return Number(num).toLocaleString('vi-VN');
     }
 
     // Chuyển số thành chữ tiếng Việt
     function numberToVietnameseWords(num) {
+      if (!num && num !== 0) return "";
+      num = Number(num) || 0;
       if (num === 0) return "Không đồng";
+
       const ones = ["", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"];
       const teens = ["mười", "mười một", "mười hai", "mười ba", "mười bốn", "mười lăm", "mười sáu", "mười bảy", "mười tám", "mười chín"];
       const tens = ["", "", "hai mươi", "ba mươi", "bốn mươi", "năm mươi", "sáu mươi", "bảy mươi", "tám mươi", "chín mươi"];
@@ -248,20 +291,23 @@
         let ten = Math.floor((number % 100) / 10);
         let unit = number % 10;
         let result = "";
+
         if (hundred > 0) {
           result += ones[hundred] + " trăm";
           if (ten === 0 && unit > 0) result += " lẻ";
         }
+
         if (ten > 1) {
-          result += " " + tens[ten];
+          result += (result ? " " : "") + tens[ten];
           if (unit === 1) result += " mốt";
           else if (unit === 5) result += " lăm";
           else if (unit > 0) result += " " + ones[unit];
         } else if (ten === 1) {
-          result += " " + teens[unit];
+          result += (result ? " " : "") + teens[unit];
         } else if (unit > 0) {
-          result += " " + ones[unit];
+          result += (result ? " " : "") + ones[unit];
         }
+
         return result.trim();
       }
 
@@ -271,15 +317,18 @@
         const chunk = num % 1000;
         if (chunk !== 0) {
           const chunkWords = readThreeDigits(chunk);
-          str = chunkWords + (units[i] ? " " + units[i] : "") + " " + str;
+          str = chunkWords + (units[i] ? " " + units[i] : "") + (str ? " " + str : "");
         }
         num = Math.floor(num / 1000);
         i++;
       }
+
       return str.trim().replace(/\s+/g, " ") + " đồng";
     }
 
     const params = getQueryParams();
+
+    // Gán dữ liệu vào các field
     document.getElementById("soPhieu").textContent = params.soPhieu || "";
     document.getElementById("ngayTao").textContent = params.ngayTao || "";
     document.getElementById("nhaCungCap").textContent = params.nhaCungCap || "";
@@ -290,12 +339,16 @@
     if (params.items) {
       const items = params.items.split("|").filter(item => item.trim() !== "");
       const tableBody = document.getElementById("productTable");
+
       let totalAmount = 0;
 
       items.forEach((row, index) => {
         const cols = row.split("~");
+        // xử lý tên SP: loại bỏ dấu phẩy đầu/cuối nếu có
         let tenSP = cols[0] ? cols[0].replace(/^,|,$/g, "").trim() : "";
-        const thanhTien = cols[5] ? Number(cols[5].replace(/\./g, "").replace(/,/g, "")) : 0;
+        // chuyển string tiền có thể chứa '.' hoặc ',' thành số
+        const rawThanhTien = cols[5] ? String(cols[5]).replace(/\./g, "").replace(/,/g, "") : "";
+        const thanhTien = rawThanhTien ? Number(rawThanhTien) : 0;
         totalAmount += thanhTien;
 
         const tr = document.createElement("tr");
@@ -312,8 +365,8 @@
       });
 
       document.getElementById("totalAmount").textContent = formatNumber(totalAmount);
-      document.getElementById("amountInWords").textContent =
-        numberToVietnameseWords(totalAmount).replace(/^./, c => c.toUpperCase());
+      const words = numberToVietnameseWords(totalAmount);
+      document.getElementById("amountInWords").textContent = words ? words.replace(/^./, c => c.toUpperCase()) : "";
     }
   </script>
 </body>
