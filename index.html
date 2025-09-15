@@ -1,164 +1,59 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Phiếu Bán Hàng</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hóa đơn bán hàng</title>
   <style>
     @page {
       size: A5 landscape;
       margin: 10mm;
     }
-
     body {
       font-family: "Segoe UI", Arial, sans-serif;
-      background: #f4f6f8;
       margin: 0;
-      padding: 20px;
+      padding: 10px;
+      background: #f5f5f5;
       font-size: 13px;
-      line-height: 1.4;
     }
-
     .container {
       width: 100%;
       max-width: 1000px;
       margin: auto;
       background: white;
-      padding: 20px 25px;
-      border-radius: 10px;
-      box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+      padding: 16px;
+      border-radius: 6px;
+      box-shadow: 0 0 6px rgba(0,0,0,0.1);
     }
+    .title { text-align: center; }
+    .title h1 { font-size: 16px; margin: 4px 0; }
+    .title h2 { font-size: 14px; margin: 4px 0; color: #004aad; text-transform: uppercase; }
 
-    .title {
-      text-align: center;
-      margin-bottom: 15px;
-    }
+    .info-table { width: 100%; margin-bottom: 15px; }
+    .info-table td { padding: 4px; vertical-align: top; }
+    .label { font-weight: 600; width: 20%; white-space: nowrap; }
+    .value { border-bottom: 1px solid #ccc; min-width: 120px; display: inline-block; }
 
-    .title h1 {
-      font-size: 16px;
-      font-weight: bold;
-      margin: 4px 0;
-    }
-
-    .title h2 {
-      font-size: 15px;
-      color: #004aad;
-      margin: 4px 0;
-      text-transform: uppercase;
-    }
-
-    .info-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 20px;
-    }
-
-    .info-table td {
-      padding: 6px 10px;
-      vertical-align: top;
-    }
-
-    .label {
-      font-weight: 600;
-      color: #333;
-      white-space: nowrap;
-      width: 22%;
-    }
-
-    .value {
-      border-bottom: 1px solid #ccc;
-      min-width: 100px;
-      display: block;
-      padding-bottom: 2px;
-      word-break: break-word;
-    }
-
-    .table-product {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 10px;
-      table-layout: auto;
-    }
-
+    .table-product { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
     .table-product th, .table-product td {
       border: 1px solid #ccc;
       padding: 6px;
       text-align: center;
-    }
-
-    .table-product th {
-      background: #cce0ff;
-      font-size: 13px;
-      white-space: nowrap;
-    }
-
-    .table-product td {
-      font-size: 13px;
       word-break: break-word;
     }
+    .table-product th { background: #cce0ff; }
 
-    .tfoot-total td {
-      font-weight: bold;
-    }
+    .tfoot-total td { font-weight: bold; }
+    .tfoot-words td { text-align: left; font-style: italic; }
 
-    .tfoot-words td {
-      font-style: italic;
-      padding-top: 10px;
-      text-align: left;
-    }
-
-    .sign-section {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 35px;
-      flex-wrap: wrap;
-      gap: 20px;
-    }
-
-    .sign-col {
-      flex: 1;
-      min-width: 200px;
-      text-align: center;
-    }
-
-    .sign-col p {
-      margin: 5px 0;
-    }
-
-    .sign-title {
-      font-weight: bold;
-      text-transform: uppercase;
-    }
-
-    .sign-placeholder {
-      font-style: italic;
-      font-size: 12px;
-      color: #666;
-      margin-bottom: 40px;
-    }
-
-    .sign-space {
-      min-height: 60px;
-    }
-
-    .sign-name {
-      margin-top: 60px;
-      font-weight: bold;
-      text-decoration: underline;
-    }
+    .sign-section { display: flex; justify-content: space-around; flex-wrap: wrap; margin-top: 20px; }
+    .sign-col { width: 40%; text-align: center; margin-bottom: 20px; }
+    .sign-title { font-weight: bold; }
+    .sign-placeholder { font-style: italic; font-size: 12px; color: #666; }
 
     @media print {
-      body {
-        background: white;
-        margin: 0;
-        padding: 0;
-      }
-
-      .container {
-        box-shadow: none;
-        border: none;
-        padding: 0;
-      }
+      body { background: white; margin: 0; padding: 0; }
+      .container { box-shadow: none; border: none; }
     }
   </style>
 </head>
@@ -166,46 +61,38 @@
   <div class="container">
     <div class="title">
       <h1>CÔNG TY CỔ PHẦN ĐẦU TƯ PHÁT TRIỂN CÔNG NGHỆ HOMESTECH</h1>
-      <h2>HOÁ ĐƠN BÁN HÀNG</h2>
+      <h2>HÓA ĐƠN BÁN HÀNG</h2>
     </div>
 
     <table class="info-table">
       <tr>
-        <td class="label">Số phiếu:</td><td><span class="value" id="soPhieu"></span></td>
-        <td class="label">Ngày bán:</td><td><span class="value" id="ngayTao"></span></td>
+        <td class="label">Số phiếu:</td><td><span id="soPhieu" class="value"></span></td>
+        <td class="label">Ngày bán:</td><td><span id="ngayTao" class="value"></span></td>
       </tr>
       <tr>
-        <td class="label">Tên Khách Hàng:</td><td><span class="value" id="nhaCungCap"></span></td>
-        <td class="label">Tình trạng:</td><td><span class="value" id="trangthaiduyet"></span></td>
+        <td class="label">Tên khách hàng:</td><td><span id="nhaCungCap" class="value"></span></td>
+        <td class="label">Tình trạng:</td><td><span id="trangthaiduyet" class="value"></span></td>
       </tr>
       <tr>
-        <td class="label">Nhân viên bán hàng:</td><td><span class="value" id="nguoiDeNghi"></span></td>
-        <td class="label">Ghi Chú:</td><td><span class="value" id="lyDoMH"></span></td>
+        <td class="label">Nhân viên bán hàng:</td><td><span id="nguoiDeNghi" class="value"></span></td>
+        <td class="label">Ghi chú:</td><td><span id="lyDoMH" class="value"></span></td>
       </tr>
     </table>
 
     <table class="table-product">
       <thead>
         <tr>
-          <th>STT</th>
-          <th>Tên SP</th>
-          <th>SL</th>
-          <th>Đơn giá</th>
-          <th>Tổng cộng</th>
-          <th>Thuế VAT</th>
-          <th>Thành tiền</th>
+          <th>STT</th><th>Tên SP</th><th>SL</th><th>Đơn giá</th><th>Tổng cộng</th><th>Thuế VAT</th><th>Thành tiền</th>
         </tr>
       </thead>
       <tbody id="productTable"></tbody>
       <tfoot>
         <tr class="tfoot-total">
-          <td colspan="6" style="text-align: right;">Tổng cộng:</td>
+          <td colspan="6" style="text-align:right;">Tổng cộng:</td>
           <td id="totalAmount"></td>
         </tr>
         <tr class="tfoot-words">
-          <td colspan="7">
-            <strong>Số tiền bằng chữ:</strong> <span id="amountInWords"></span>
-          </td>
+          <td colspan="7"><strong>Số tiền bằng chữ:</strong> <span id="amountInWords"></span></td>
         </tr>
       </tfoot>
     </table>
@@ -214,16 +101,66 @@
       <div class="sign-col">
         <p class="sign-title">Người lập phiếu</p>
         <p class="sign-placeholder">(Ký, ghi rõ họ tên)</p>
-        <div class="sign-space"></div>
-        <p class="sign-name">---</p>
+        <p>---</p>
       </div>
       <div class="sign-col">
         <p class="sign-title">Giám đốc</p>
         <p class="sign-placeholder">(Ký, ghi rõ họ tên)</p>
-        <div class="sign-space"></div>
-        <p class="sign-name">Trần Văn Bảo</p>
+        <p><strong>Trần Văn Bảo</strong></p>
       </div>
     </div>
   </div>
+
+<script>
+  function decodeSafe(s) {
+    try { return decodeURIComponent(s.replace(/\+/g, " ")); } catch { return s; }
+  }
+  function getParams() {
+    const params = {};
+    window.location.search.replace(/^\?/, "").split("&").forEach(p=>{
+      if (!p) return;
+      let [k,v] = p.split("=");
+      params[decodeSafe(k)] = decodeSafe(v||"");
+    });
+    return params;
+  }
+  function formatNumber(n) {
+    return n ? Number(n).toLocaleString("vi-VN") : "";
+  }
+  function numberToVietnameseWords(num) {
+    if (!num) return "";
+    return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" })
+      .format(num).replace("₫","đồng");
+  }
+
+  const params = getParams();
+  document.getElementById("soPhieu").textContent = params.soPhieu || "";
+  document.getElementById("ngayTao").textContent = params.ngayTao || "";
+  document.getElementById("nhaCungCap").textContent = params.nhaCungCap || "";
+  document.getElementById("trangthaiduyet").textContent = params.trangthaiduyet || "";
+  document.getElementById("nguoiDeNghi").textContent = params.nguoiDeNghi || "";
+  document.getElementById("lyDoMH").textContent = params.lyDoMH || "";
+
+  let total = 0;
+  if (params.items) {
+    const rows = params.items.split("|");
+    rows.forEach((row,i)=>{
+      const [ten, sl, dongia, tong, vat, thanhtien] = row.split("~");
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${i+1}</td>
+        <td style="text-align:left">${ten||""}</td>
+        <td>${sl||""}</td>
+        <td>${formatNumber(dongia)}</td>
+        <td>${formatNumber(tong)}</td>
+        <td>${formatNumber(vat)}</td>
+        <td>${formatNumber(thanhtien)}</td>`;
+      document.getElementById("productTable").appendChild(tr);
+      total += Number(thanhtien||0);
+    });
+  }
+  document.getElementById("totalAmount").textContent = formatNumber(total);
+  document.getElementById("amountInWords").textContent = numberToVietnameseWords(total);
+</script>
 </body>
 </html>
