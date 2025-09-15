@@ -2,6 +2,9 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta http-equiv="Content-Language" content="vi" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Phiếu Bán Hàng</title>
   <style>
     @page {
@@ -10,7 +13,7 @@
     }
 
     body {
-      font-family: "Segoe UI", sans-serif;
+      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
       background: #f4f6f8;
       margin: 0;
       padding: 20px;
@@ -216,22 +219,66 @@
   </div>
 
   <script>
+    // Giải pháp decode an toàn: xử lý + (space), decode 1 hoặc 2 lần nếu cần
+    function decodeSafe(s) {
+      if (s == null) return "";
+      try {
+        // Thay + thành space (nếu URL được form-encoded)
+        s = s.replace(/\+/g, ' ');
+        // decode lần 1
+        s = decodeURIComponent(s);
+        // Nếu sau decode vẫn còn mã %XX thì decode thêm lần nữa (double-encoded)
+        if (/%[0-9A-F]{2}/i.test(s)) {
+          try {
+            s = decodeURIComponent(s);
+          } catch (e) {
+            // nếu lỗi thì giữ nguyên
+          }
+        }
+      } catch (e) {
+        // fallback: unescape (ít an toàn nhưng có thể giúp)
+        try {
+          s = unescape(s);
+        } catch (e2) {
+          // giữ nguyên s nếu không decode được
+        }
+      }
+      return s;
+    }
+
     function getQueryParams() {
       const params = {};
-      location.search.substr(1).split("&").forEach(function(part) {
-        const [key, value] = part.split("=");
-        params[decodeURIComponent(key)] = decodeURIComponent(value || "");
+      const query = (location.search || "").replace(/^\?/, "");
+      if (!query) return params;
+
+      query.split("&").forEach(function(part) {
+        if (!part) return;
+        const idx = part.indexOf("=");
+        let rawKey, rawValue;
+        if (idx >= 0) {
+          rawKey = part.slice(0, idx);
+          rawValue = part.slice(idx + 1);
+        } else {
+          rawKey = part;
+          rawValue = "";
+        }
+        const key = decodeSafe(rawKey);
+        const value = decodeSafe(rawValue);
+        params[key] = value;
       });
+
       return params;
     }
 
     function formatNumber(num) {
-      if (num === "" || num == null) return "";
+      if (num === "" || num == null || isNaN(Number(num))) return "";
       return Number(num).toLocaleString('vi-VN');
     }
 
     // Chuyển số thành chữ tiếng Việt
     function numberToVietnameseWords(num) {
+      if (!num && num !== 0) return "";
+      num = Number(num) || 0;
       if (num === 0) return "Không đồng";
 
       const ones = ["", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"];
@@ -251,14 +298,14 @@
         }
 
         if (ten > 1) {
-          result += " " + tens[ten];
+          result += (result ? " " : "") + tens[ten];
           if (unit === 1) result += " mốt";
           else if (unit === 5) result += " lăm";
           else if (unit > 0) result += " " + ones[unit];
         } else if (ten === 1) {
-          result += " " + teens[unit];
+          result += (result ? " " : "") + teens[unit];
         } else if (unit > 0) {
-          result += " " + ones[unit];
+          result += (result ? " " : "") + ones[unit];
         }
 
         return result.trim();
@@ -266,12 +313,11 @@
 
       let str = "";
       let i = 0;
-
       while (num > 0) {
         const chunk = num % 1000;
         if (chunk !== 0) {
           const chunkWords = readThreeDigits(chunk);
-          str = chunkWords + (units[i] ? " " + units[i] : "") + " " + str;
+          str = chunkWords + (units[i] ? " " + units[i] : "") + (str ? " " + str : "");
         }
         num = Math.floor(num / 1000);
         i++;
@@ -282,6 +328,7 @@
 
     const params = getQueryParams();
 
+    // Gán dữ liệu vào các field
     document.getElementById("soPhieu").textContent = params.soPhieu || "";
     document.getElementById("ngayTao").textContent = params.ngayTao || "";
     document.getElementById("nhaCungCap").textContent = params.nhaCungCap || "";
@@ -297,8 +344,11 @@
 
       items.forEach((row, index) => {
         const cols = row.split("~");
+        // xử lý tên SP: loại bỏ dấu phẩy đầu/cuối nếu có
         let tenSP = cols[0] ? cols[0].replace(/^,|,$/g, "").trim() : "";
-        const thanhTien = cols[5] ? Number(cols[5].replace(/\./g, "").replace(/,/g, "")) : 0;
+        // chuyển string tiền có thể chứa '.' hoặc ',' thành số
+        const rawThanhTien = cols[5] ? String(cols[5]).replace(/\./g, "").replace(/,/g, "") : "";
+        const thanhTien = rawThanhTien ? Number(rawThanhTien) : 0;
         totalAmount += thanhTien;
 
         const tr = document.createElement("tr");
@@ -315,7 +365,8 @@
       });
 
       document.getElementById("totalAmount").textContent = formatNumber(totalAmount);
-      document.getElementById("amountInWords").textContent = numberToVietnameseWords(totalAmount).replace(/^./, c => c.toUpperCase());
+      const words = numberToVietnameseWords(totalAmount);
+      document.getElementById("amountInWords").textContent = words ? words.replace(/^./, c => c.toUpperCase()) : "";
     }
   </script>
 </body>
