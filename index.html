@@ -1,359 +1,230 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Phiếu Bán Hàng</title>
-  <style>
-    @page {
-      size: A5 landscape;
-      margin: 10mm;
-    }
-
-    body {
-      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-      background: #f4f6f8;
-      margin: 0;
-      padding: 10px;
-      font-size: 13px;
-    }
-
-    .container {
-      max-width: 100%;
-      margin: auto;
-      background: white;
-      padding: 16px;
-      border-radius: 10px;
-      box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
-      box-sizing: border-box;
-    }
-
-    .title {
-      text-align: center;
-      margin-bottom: 10px;
-    }
-
-    .title h1 {
-      font-size: 14px;
-      font-weight: bold;
-      margin: 4px 0;
-    }
-
-    .title h2 {
-      font-size: 13px;
-      color: #004aad;
-      margin: 4px 0;
-      text-transform: uppercase;
-    }
-
-    .info-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 15px;
-      font-size: 12px;
-    }
-
-    .info-table td {
-      padding: 4px 6px;
-      vertical-align: top;
-    }
-
-    .label {
-      font-weight: 600;
-      white-space: nowrap;
-      width: 22%;
-    }
-
-    .value {
-      border-bottom: 1px solid #ccc;
-      min-width: 80px;
-      display: inline-block;
-      padding-bottom: 1px;
-      word-break: break-word;
-    }
-
-    .table-product {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 8px;
-      font-size: 12px;
-      table-layout: auto;
-    }
-
-    .table-product th, .table-product td {
-      border: 1px solid #ccc;
-      padding: 4px;
-      text-align: center;
-      word-wrap: break-word;
-    }
-
-    .table-product th {
-      background: #cce0ff;
-      font-size: 12px;
-    }
-
-    .tfoot-total td {
-      font-weight: bold;
-    }
-
-    .tfoot-words td {
-      font-style: italic;
-      padding-top: 6px;
-      text-align: left;
-    }
-
-    .sign-section {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 25px;
-      flex-wrap: wrap;
-      font-size: 12px;
-    }
-
-    .sign-col {
-      width: 48%;
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .sign-title {
-      font-weight: bold;
-      text-transform: uppercase;
-    }
-
-    .sign-placeholder {
-      font-style: italic;
-      font-size: 11px;
-      color: #666;
-      margin-bottom: 35px;
-    }
-
-    .sign-name {
-      margin-top: 40px;
-      font-weight: bold;
-      text-decoration: underline;
-    }
-
-    /* Responsive: auto zoom trên mobile */
-    @media (max-width: 600px) {
-      body {
-        font-size: 12px;
-        padding: 0;
-      }
-
-      .container {
-        transform: scale(0.85);   /* Thu nhỏ toàn bộ */
-        transform-origin: top left;
-        width: 118%;              /* Bù trừ để vừa màn hình */
-      }
-
-      .title h1 { font-size: 13px; }
-      .title h2 { font-size: 12px; }
-
-      .sign-section { flex-direction: column; align-items: center; }
-      .sign-col { width: 100%; margin-bottom: 30px; }
-    }
-
-    @media print {
-      body {
-        background: white;
-        margin: 0;
-        padding: 0;
-      }
-      .container {
-        box-shadow: none;
-        border: none;
-        transform: none !important; /* In ra giữ nguyên A5 */
-        width: 100% !important;
-      }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Phiếu Bán Hàng</title>
+<style>
+  @page { size: A5 landscape; margin: 10mm; }
+  body {
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    background: #f4f6f8;
+    margin: 0;
+    padding: 10px;
+    font-size: 13px;
+  }
+  .container {
+    max-width: 100%;
+    margin: auto;
+    background: white;
+    padding: 16px;
+    border-radius: 10px;
+    box-shadow: 0 0 12px rgba(0,0,0,0.1);
+    box-sizing: border-box;
+  }
+  .title { text-align: center; margin-bottom: 10px; }
+  .title h1 { font-size: 14px; font-weight: bold; margin: 4px 0; }
+  .title h2 { font-size: 13px; color: #004aad; margin: 4px 0; text-transform: uppercase; }
+  .info-table { width:100%; border-collapse:collapse; margin-bottom:15px; font-size:12px; }
+  .info-table td { padding: 4px 6px; vertical-align: top; }
+  .label { font-weight:600; white-space:nowrap; width:22%; }
+  .value { border-bottom:1px solid #ccc; min-width:80px; display:inline-block; padding-bottom:1px; word-break:break-word; }
+  .table-product { width:100%; border-collapse:collapse; margin-bottom:8px; font-size:12px; table-layout:auto; }
+  .table-product th, .table-product td { border:1px solid #ccc; padding:4px; text-align:center; word-wrap:break-word; }
+  .table-product th { background:#cce0ff; font-size:12px; }
+  .tfoot-total td { font-weight:bold; }
+  .tfoot-words td { font-style:italic; padding-top:6px; text-align:left; }
+  .sign-section { display:flex; justify-content:space-between; margin-top:25px; flex-wrap:wrap; font-size:12px; }
+  .sign-col { width:30%; text-align:center; margin-bottom:20px; }
+  .sign-title { font-weight:bold; text-transform:uppercase; }
+  .sign-placeholder { font-style:italic; font-size:11px; color:#666; margin-bottom:35px; }
+  .sign-name { margin-top:40px; font-weight:bold; text-decoration:underline; }
+  #qrPayment { width:150px; height:150px; margin-top:0; }
+  @media (max-width:600px) {
+    body { font-size:12px; padding:0; }
+    .container { transform:scale(0.85); transform-origin:top left; width:118%; }
+    .title h1 { font-size:13px; }
+    .title h2 { font-size:12px; }
+    .sign-section { flex-direction:column; align-items:center; }
+    .sign-col { width:100%; margin-bottom:30px; }
+  }
+  @media print {
+    body { background:white; margin:0; padding:0; }
+    .container { box-shadow:none; border:none; transform:none !important; width:100% !important; }
+  }
+</style>
 </head>
 <body>
-  <div class="container">
-    <div class="title">
-      <h1>CÔNG TY CỔ PHẦN ĐẦU TƯ PHÁT TRIỂN CÔNG NGHỆ HOMESTECH</h1>
-      <h2>HOÁ ĐƠN BÁN HÀNG</h2>
-    </div>
-
-    <table class="info-table">
-      <tr>
-        <td class="label">Số phiếu:</td><td><span class="value" id="soPhieu"></span></td>
-        <td class="label">Ngày bán:</td><td><span class="value" id="ngayTao"></span></td>
-      </tr>
-      <tr>
-        <td class="label">Tên Khách Hàng:</td><td><span class="value" id="nhaCungCap"></span></td>
-        <td class="label">Tình trạng:</td><td><span class="value" id="trangthaiduyet"></span></td>
-      </tr>
-      <tr>
-        <td class="label">Nhân viên bán hàng:</td><td><span class="value" id="nguoiDeNghi"></span></td>
-        <td class="label">Ghi Chú:</td><td><span class="value" id="lyDoMH"></span></td>
-      </tr>
-    </table>
-
-    <table class="table-product">
-      <thead>
-        <tr>
-          <th>STT</th>
-          <th>Tên SP</th>
-          <th>SL</th>
-          <th>Đơn giá</th>
-          <th>Tổng cộng</th>
-          <th>Thuế VAT</th>
-          <th>Thành tiền</th>
-        </tr>
-      </thead>
-      <tbody id="productTable"></tbody>
-      <tfoot>
-        <tr class="tfoot-total">
-          <td colspan="6" style="text-align: right;">Tổng cộng:</td>
-          <td id="totalAmount"></td>
-        </tr>
-        <tr class="tfoot-words">
-          <td colspan="7">
-            <strong>Số tiền bằng chữ:</strong> <span id="amountInWords"></span>
-          </td>
-        </tr>
-      </tfoot>
-    </table>
-
-    <div class="sign-section">
-      <div class="sign-col">
-        <p class="sign-title">Người lập phiếu</p>
-        <p class="sign-placeholder">(Ký, ghi rõ họ tên)</p>
-        <p class="sign-name">---</p>
-      </div>
-      <div class="sign-col">
-        <p class="sign-title">Giám đốc</p>
-        <p class="sign-placeholder">(Ký, ghi rõ họ tên)</p>
-        <p class="sign-name">Trần Văn Bảo</p>
-      </div>
-    </div>
+<div class="container">
+  <div class="title">
+    <h1>CÔNG TY CỔ PHẦN ĐẦU TƯ PHÁT TRIỂN CÔNG NGHỆ HOMESTECH</h1>
+    <h2>HOÁ ĐƠN BÁN HÀNG</h2>
   </div>
 
-  <script>
-    function decodeSafe(s) {
-      if (s == null) return "";
-      try {
-        s = s.replace(/\+/g, ' ');
-        s = decodeURIComponent(s);
-        if (/%[0-9A-F]{2}/i.test(s)) {
-          try { s = decodeURIComponent(s); } catch(e){}
-        }
-      } catch (e) {
-        try { s = unescape(s); } catch(e2){}
-      }
-      return s;
+  <table class="info-table">
+    <tr>
+      <td class="label">Số phiếu:</td><td><span class="value" id="soPhieu"></span></td>
+      <td class="label">Ngày bán:</td><td><span class="value" id="ngayTao"></span></td>
+    </tr>
+    <tr>
+      <td class="label">Tên Khách Hàng:</td><td><span class="value" id="nhaCungCap"></span></td>
+      <td class="label">Tình trạng:</td><td><span class="value" id="trangthaiduyet"></span></td>
+    </tr>
+    <tr>
+      <td class="label">Nhân viên bán hàng:</td><td><span class="value" id="nguoiDeNghi"></span></td>
+      <td class="label">Ghi Chú:</td><td><span class="value" id="lyDoMH"></span></td>
+    </tr>
+  </table>
+
+  <table class="table-product">
+    <thead>
+      <tr>
+        <th>STT</th>
+        <th>Tên SP</th>
+        <th>SL</th>
+        <th>Đơn giá</th>
+        <th>Tổng cộng</th>
+        <th>Thuế VAT</th>
+        <th>Thành tiền</th>
+      </tr>
+    </thead>
+    <tbody id="productTable"></tbody>
+    <tfoot>
+      <tr class="tfoot-total">
+        <td colspan="6" style="text-align:right;">Tổng cộng:</td>
+        <td id="totalAmount"></td>
+      </tr>
+      <tr class="tfoot-words">
+        <td colspan="7"><strong>Số tiền bằng chữ:</strong> <span id="amountInWords"></span></td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <div class="sign-section">
+    <div class="sign-col">
+      <p class="sign-title">Người lập phiếu</p>
+      <p class="sign-placeholder">(Ký, ghi rõ họ tên)</p>
+      <p class="sign-name">---</p>
+    </div>
+
+    <!-- QR thanh toán -->
+    <div class="sign-col" style="width:30%;">
+      <img id="qrPayment" alt="QR VietQR Thanh Toán">
+      <p style="font-size:11px;margin-top:5px;">Quét QR thanh toán</p>
+    </div>
+
+    <div class="sign-col">
+      <p class="sign-title">Giám đốc</p>
+      <p class="sign-placeholder">(Ký, ghi rõ họ tên)</p>
+      <p class="sign-name">Trần Văn Bảo</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===================== Helper ======================
+function decodeSafe(s){
+  if(s==null) return "";
+  try{ s=s.replace(/\+/g,' '); s=decodeURIComponent(s); if(/%[0-9A-F]{2}/i.test(s)) try{s=decodeURIComponent(s);}catch(e){} }catch(e){try{s=unescape(s);}catch(e2){}}
+  return s;
+}
+function getQueryParams() {
+  const params={};
+  const query=(location.search||"").replace(/^\?/,"");
+  if(!query) return params;
+  query.split("&").forEach(function(part){
+    if(!part) return;
+    const idx=part.indexOf("=");
+    let rawKey=idx>=0?part.slice(0,idx):part;
+    let rawValue=idx>=0?part.slice(idx+1):"";
+    const key=decodeSafe(rawKey);
+    const value=decodeSafe(rawValue);
+    params[key]=value;
+  });
+  return params;
+}
+function formatNumber(num){ return (num!=="" && !isNaN(Number(num)))?Number(num).toLocaleString('vi-VN'):""; }
+function numberToVietnameseWords(num){
+  if(!num&&num!==0) return "";
+  num=Number(num)||0;
+  if(num===0) return "Không đồng";
+  const ones=["","một","hai","ba","bốn","năm","sáu","bảy","tám","chín"];
+  const teens=["mười","mười một","mười hai","mười ba","mười bốn","mười lăm","mười sáu","mười bảy","mười tám","mười chín"];
+  const tens=["","","hai mươi","ba mươi","bốn mươi","năm mươi","sáu mươi","bảy mươi","tám mươi","chín mươi"];
+  const units=["","nghìn","triệu","tỷ","nghìn tỷ","triệu tỷ"];
+  function readThreeDigits(number){
+    let hundred=Math.floor(number/100);
+    let ten=Math.floor((number%100)/10);
+    let unit=number%10;
+    let result="";
+    if(hundred>0){ result+=ones[hundred]+" trăm"; if(ten===0&&unit>0) result+=" lẻ"; }
+    if(ten>1){ result+=(result?" ":"")+tens[ten]; if(unit===1) result+=" mốt"; else if(unit===5) result+=" lăm"; else if(unit>0) result+=" "+ones[unit]; }
+    else if(ten===1){ result+=(result?" ":"")+teens[unit]; }
+    else if(unit>0){ result+=(result?" ":"")+ones[unit]; }
+    return result.trim();
+  }
+  let str="";
+  let i=0;
+  while(num>0){
+    const chunk=num%1000;
+    if(chunk!==0){
+      const chunkWords=readThreeDigits(chunk);
+      str=chunkWords+(units[i]?" "+units[i]:"")+(str?" "+str:"");
     }
+    num=Math.floor(num/1000);
+    i++;
+  }
+  return str.trim().replace(/\s+/g," ")+" đồng";
+}
 
-    function getQueryParams() {
-      const params = {};
-      const query = (location.search || "").replace(/^\?/, "");
-      if (!query) return params;
-      query.split("&").forEach(function(part) {
-        if (!part) return;
-        const idx = part.indexOf("=");
-        let rawKey = idx >= 0 ? part.slice(0, idx) : part;
-        let rawValue = idx >= 0 ? part.slice(idx + 1) : "";
-        const key = decodeSafe(rawKey);
-        const value = decodeSafe(rawValue);
-        params[key] = value;
-      });
-      return params;
-    }
+// ===================== LẤY QUERY =====================
+const params=getQueryParams();
+document.getElementById("soPhieu").textContent=params.soPhieu||"";
+document.getElementById("ngayTao").textContent=params.ngayTao||"";
+document.getElementById("nhaCungCap").textContent=params.nhaCungCap||"";
+document.getElementById("lyDoMH").textContent=params.lyDoMH||"";
+document.getElementById("trangthaiduyet").textContent=params.trangthaiduyet||"";
+document.getElementById("nguoiDeNghi").textContent=params.nguoiDeNghi||"";
 
-    function formatNumber(num) {
-      if (num === "" || num == null || isNaN(Number(num))) return "";
-      return Number(num).toLocaleString('vi-VN');
-    }
+// ===================== HIỂN THỊ SẢN PHẨM =====================
+let totalAmount=0;
+if(params.items){
+  const items=params.items.split("|").filter(item=>item.trim()!=="");
+  const tableBody=document.getElementById("productTable");
+  items.forEach((row,index)=>{
+    const cols=row.split("~");
+    const tenSP=cols[0]?cols[0].trim():"";
+    const rawThanhTien=cols[5]?String(cols[5]).replace(/\./g,"").replace(/,/g,""):"";
+    const thanhTien=rawThanhTien?Number(rawThanhTien):0;
+    totalAmount+=thanhTien;
+    const tr=document.createElement("tr");
+    tr.innerHTML=`
+      <td>${index+1}</td>
+      <td style="text-align:left">${tenSP}</td>
+      <td>${cols[1]||""}</td>
+      <td>${cols[2]?formatNumber(cols[2]):""}</td>
+      <td>${cols[3]?formatNumber(cols[3]):""}</td>
+      <td>${cols[4]?formatNumber(cols[4]):""}</td>
+      <td>${cols[5]?formatNumber(cols[5]):""}</td>
+    `;
+    tableBody.appendChild(tr);
+  });
+}
+document.getElementById("totalAmount").textContent=formatNumber(totalAmount);
+document.getElementById("amountInWords").textContent=numberToVietnameseWords(totalAmount).replace(/^./,c=>c.toUpperCase());
 
-    function numberToVietnameseWords(num) {
-      if (!num && num !== 0) return "";
-      num = Number(num) || 0;
-      if (num === 0) return "Không đồng";
+// ===================== QR VIETQR =====================
+const BIN="970422";
+const ACCOUNT="0906255788";
+const ACCOUNT_NAME="NGUYEN THI TRUC PHUONG";
+function buildVietQR(amount){
+  const info=encodeURIComponent("Thanh toan hoa don");
+  const accName=encodeURIComponent(ACCOUNT_NAME);
+  const amt=Number(amount)||0;
+  return `https://img.vietqr.io/image/${BIN}-${ACCOUNT}-compact.png?amount=${amt}&addInfo=${info}&accountName=${accName}`;
+}
+document.getElementById("qrPayment").src=buildVietQR(totalAmount);
 
-      const ones = ["", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"];
-      const teens = ["mười", "mười một", "mười hai", "mười ba", "mười bốn", "mười lăm", "mười sáu", "mười bảy", "mười tám", "mười chín"];
-      const tens = ["", "", "hai mươi", "ba mươi", "bốn mươi", "năm mươi", "sáu mươi", "bảy mươi", "tám mươi", "chín mươi"];
-      const units = ["", "nghìn", "triệu", "tỷ", "nghìn tỷ", "triệu tỷ"];
-
-      function readThreeDigits(number) {
-        let hundred = Math.floor(number / 100);
-        let ten = Math.floor((number % 100) / 10);
-        let unit = number % 10;
-        let result = "";
-
-        if (hundred > 0) {
-          result += ones[hundred] + " trăm";
-          if (ten === 0 && unit > 0) result += " lẻ";
-        }
-
-        if (ten > 1) {
-          result += (result ? " " : "") + tens[ten];
-          if (unit === 1) result += " mốt";
-          else if (unit === 5) result += " lăm";
-          else if (unit > 0) result += " " + ones[unit];
-        } else if (ten === 1) {
-          result += (result ? " " : "") + teens[unit];
-        } else if (unit > 0) {
-          result += (result ? " " : "") + ones[unit];
-        }
-
-        return result.trim();
-      }
-
-      let str = "";
-      let i = 0;
-      while (num > 0) {
-        const chunk = num % 1000;
-        if (chunk !== 0) {
-          const chunkWords = readThreeDigits(chunk);
-          str = chunkWords + (units[i] ? " " + units[i] : "") + (str ? " " + str : "");
-        }
-        num = Math.floor(num / 1000);
-        i++;
-      }
-      return str.trim().replace(/\s+/g, " ") + " đồng";
-    }
-
-    const params = getQueryParams();
-
-    document.getElementById("soPhieu").textContent = params.soPhieu || "";
-    document.getElementById("ngayTao").textContent = params.ngayTao || "";
-    document.getElementById("nhaCungCap").textContent = params.nhaCungCap || "";
-    document.getElementById("lyDoMH").textContent = params.lyDoMH || "";
-    document.getElementById("trangthaiduyet").textContent = params.trangthaiduyet || "";
-    document.getElementById("nguoiDeNghi").textContent = params.nguoiDeNghi || "";
-
-    if (params.items) {
-      const items = params.items.split("|").filter(item => item.trim() !== "");
-      const tableBody = document.getElementById("productTable");
-      let totalAmount = 0;
-
-      items.forEach((row, index) => {
-        const cols = row.split("~");
-        let tenSP = cols[0] ? cols[0].trim() : "";
-        const rawThanhTien = cols[5] ? String(cols[5]).replace(/\./g, "").replace(/,/g, "") : "";
-        const thanhTien = rawThanhTien ? Number(rawThanhTien) : 0;
-        totalAmount += thanhTien;
-
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${index + 1}</td>
-          <td style="text-align:left">${tenSP}</td>
-          <td>${cols[1] || ""}</td>
-          <td>${cols[2] ? formatNumber(cols[2]) : ""}</td>
-          <td>${cols[3] ? formatNumber(cols[3]) : ""}</td>
-          <td>${cols[4] ? formatNumber(cols[4]) : ""}</td>
-          <td>${cols[5] ? formatNumber(cols[5]) : ""}</td>
-        `;
-        tableBody.appendChild(tr);
-      });
-
-      document.getElementById("totalAmount").textContent = formatNumber(totalAmount);
-      const words = numberToVietnameseWords(totalAmount);
-      document.getElementById("amountInWords").textContent = words ? words.replace(/^./, c => c.toUpperCase()) : "";
-    }
-  </script>
+</script>
 </body>
 </html>
