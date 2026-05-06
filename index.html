@@ -218,7 +218,7 @@ const BIN="970422";
 const ACCOUNT="0906255788";
 const ACCOUNT_NAME="NGUYEN THI TRUC PHUONG";
 function buildVietQR(amount){
-  const info=encodeURIComponent("Thanh toan hoa don");
+  const info=encodeURIComponent("CK");
   const accName=encodeURIComponent(ACCOUNT_NAME);
   const amt=Number(amount)||0;
   return `https://img.vietqr.io/image/${BIN}-${ACCOUNT}-compact.png?amount=${amt}&addInfo=${info}&accountName=${accName}`;
