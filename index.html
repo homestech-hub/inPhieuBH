@@ -214,10 +214,27 @@ document.getElementById("totalAmount").textContent=formatNumber(totalAmount);
 document.getElementById("amountInWords").textContent=numberToVietnameseWords(totalAmount).replace(/^./,c=>c.toUpperCase());
 
 // ===================== QR VIETQR =====================
-const BIN = "546034"; // BIN ngân hàng Cake by VPBank
-const ACCOUNT = "0972023222";
-const ACCOUNT_NAME = "NGUYEN THI NGA";
 
+// Lấy hạng mục từ URL
+const hangMuc = params.HangMuc || params.hangMuc || "";
+
+// ===================== THÔNG TIN TÀI KHOẢN =====================
+
+// QR mặc định: Cake cá nhân
+let BIN = "546034";
+let ACCOUNT = "0972023222";
+let ACCOUNT_NAME = "NGUYEN THI NGA";
+let BANK_LABEL = "CAKE - NGUYỄN THỊ NGA";
+
+// Nếu có VAT => chuyển sang MB Bank công ty
+if (hangMuc.trim() === "Có Thuế VAT") {
+  BIN = "549544911"; // MB Bank
+  ACCOUNT = "YOUR_MB_ACCOUNT";
+  ACCOUNT_NAME = "HOMESTECH JSC";
+  BANK_LABEL = "MB BANK - CÔNG TY HOMESTECH";
+}
+
+// Tạo QR
 function buildVietQR(amount){
   const info = encodeURIComponent("CK");
   const accName = encodeURIComponent(ACCOUNT_NAME);
@@ -226,7 +243,11 @@ function buildVietQR(amount){
   return `https://img.vietqr.io/image/${BIN}-${ACCOUNT}-compact.png?amount=${amt}&addInfo=${info}&accountName=${accName}`;
 }
 
+// Hiển thị QR
 document.getElementById("qrPayment").src = buildVietQR(totalAmount);
+
+// Hiển thị tên tài khoản dưới QR
+document.querySelector("#qrPayment + p").textContent = BANK_LABEL;
 
 </script>
 </body>
