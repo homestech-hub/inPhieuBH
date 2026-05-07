@@ -214,16 +214,19 @@ document.getElementById("totalAmount").textContent=formatNumber(totalAmount);
 document.getElementById("amountInWords").textContent=numberToVietnameseWords(totalAmount).replace(/^./,c=>c.toUpperCase());
 
 // ===================== QR VIETQR =====================
-const BIN="970422";
-const ACCOUNT="0906255788";
-const ACCOUNT_NAME="NGUYEN THI TRUC PHUONG";
+const BIN = "546034"; // BIN ngân hàng Cake by VPBank
+const ACCOUNT = "0972023222";
+const ACCOUNT_NAME = "NGUYEN THI NGA";
+
 function buildVietQR(amount){
-  const info=encodeURIComponent("CK");
-  const accName=encodeURIComponent(ACCOUNT_NAME);
-  const amt=Number(amount)||0;
+  const info = encodeURIComponent("CK");
+  const accName = encodeURIComponent(ACCOUNT_NAME);
+  const amt = Number(amount) || 0;
+
   return `https://img.vietqr.io/image/${BIN}-${ACCOUNT}-compact.png?amount=${amt}&addInfo=${info}&accountName=${accName}`;
 }
-document.getElementById("qrPayment").src=buildVietQR(totalAmount);
+
+document.getElementById("qrPayment").src = buildVietQR(totalAmount);
 
 </script>
 </body>
